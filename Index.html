@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descubra o nome do Zé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.6em;
+            color: #fbbf24;
+            text-shadow: 3px 3px 0px #b45309;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+
+        /* Painel de Chaves */
+        .keys-section {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 15px;
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .keys-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .selected-key-display {
+            color: #38bdf8;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8em;
+        }
+
+        .keys-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+            gap: 8px;
+            max-height: 140px;
+            overflow-y: auto;
+            padding: 8px;
+            background: #0f172a;
+            border-radius: 8px;
+        }
+
+        .key-item {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 6px 2px;
+            text-align: center;
+            font-size: 0.7em;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .key-item:hover {
+            border-color: #fbbf24;
+            background: #334155;
+        }
+
+        .key-item.selected {
+            background: #f59e0b;
+            color: #000;
+            font-weight: bold;
+            border-color: #fff;
+            box-shadow: 0 0 10px #f59e0b;
+        }
+
+        /* Grid das Portas */
+        .doors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+            gap: 18px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .door-card {
+            background: linear-gradient(145deg, #78350f, #451a03);
+            border: 3px solid #b45309;
+            border-radius: 10px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s;
+        }
+
+        .door-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .door-number {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65em;
+            background: rgba(0,0,0,0.7);
+            padding: 4px 6px;
+            border-radius: 4px;
+            color: #fef08a;
+        }
+
+        .door-status {
+            font-size: 0.7em;
+            font-weight: 800;
+            text-align: center;
+            width: 100%;
+            padding: 6px 2px;
+            border-radius: 4px;
+            background: rgba(0,0,0,0.6);
+            word-break: break-word;
+        }
+
+        /* Porta Revelada com Sucesso */
+        .door-card.secret-found {
+            background: linear-gradient(145deg, #15803d, #166534) !important;
+            border-color: #22c55e !important;
+            box-shadow: 0 0 30px #22c55e;
+            animation: pulse 1s infinite alternate;
+        }
+
+        .door-card.secret-found .door-status {
+            background: #fff;
+            color: #000;
+            font-size: 0.75em;
+            font-weight: 900;
+        }
+
+        /* Porta Errada Aberta */
+        .door-card.wrong-door {
+            background: #111827 !important;
+            border-color: #ef4444 !important;
+        }
+
+        .door-card.wrong-door .door-status {
+            background: #dc2626;
+            color: #fff;
+            font-size: 0.65em;
+            line-height: 1.2;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>DESCUBRA O NOME DO ZÉ</h1>
+        <p>As portas estão completamente embaralhadas! Ache a chave certa no painel e teste na porta.</p>
+    </header>
+
+    <div class="keys-section">
+        <div class="keys-header">
+            <span>PAINEL DE CHAVES</span>
+            <div class="selected-key-display" id="selectedKeyDisplay">CHAVE SELECIONADA: NENHUMA</div>
+        </div>
+        <div class="keys-grid" id="keysGrid"></div>
+    </div>
+
+    <div class="doors-grid" id="doorsGrid"></div>
+
+    <script>
+        const total = 1000;
+        let selectedKey = null;
+
+        const keysGrid = document.getElementById('keysGrid');
+        const doorsGrid = document.getElementById('doorsGrid');
+        const selectedKeyDisplay = document.getElementById('selectedKeyDisplay');
+
+        // Gerador de xingamentos/zoações variadas
+        const adjetivos1 = ["Otário", "Cangaceiro da perca de tempo", "Lenda do vácuo", "Malandro de teclado", "Bobo da corte", "Cria do erro", "Inimigo do tempo", "Sombra de perdedor", "Pai do desespero", "Campeão de nada"];
+        const adjetivos2 = ["sem futuro", "iludido", "desocupado", "sem noção", "inútil", "persistente demais", "atrapalhado", "sem esperança", "sem rumo"];
+        
+        function gerarXingamento(numero) {
+            const adj1 = adjetivos1[numero % adjetivos1.length];
+            const adj2 = adjetivos2[(numero * 7) % adjetivos2.length];
+            return `${adj1} ${adj2}!`;
+        }
+
+        // 1. Gera as 1000 Chaves em ordem
+        for (let i = 1; i <= total; i++) {
+            const keyEl = document.createElement('div');
+            keyEl.classList.add('key-item');
+            keyEl.innerText = `🔑 #${i}`;
+
+            keyEl.addEventListener('click', () => {
+                document.querySelectorAll('.key-item').forEach(k => k.classList.remove('selected'));
+                keyEl.classList.add('selected');
+                selectedKey = i;
+                selectedKeyDisplay.innerText = `CHAVE SELECIONADA: #${i}`;
+            });
+
+            keysGrid.appendChild(keyEl);
+        }
+
+        // 2. Cria array de 1 a 1000 e embaralha totalmente
+        const doorNumbers = Array.from({ length: total }, (_, i) => i + 1);
+        
+        // Algoritmo Fisher-Yates para embaralhar aleatoriamente
+        for (let i = doorNumbers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [doorNumbers[i], doorNumbers[j]] = [doorNumbers[j], doorNumbers[i]];
+        }
+
+        // 3. Renderiza as portas na ordem embaralhada
+        doorNumbers.forEach(doorNum => {
+            const doorEl = document.createElement('div');
+            doorEl.classList.add('door-card');
+
+            doorEl.innerHTML = `
+                <div class="door-number">PORTA ${doorNum}</div>
+                <div class="door-status" id="status-${doorNum}">TRANCADA</div>
+            `;
+
+            doorEl.addEventListener('click', () => {
+                const statusEl = document.getElementById(`status-${doorNum}`);
+
+                if (!selectedKey) {
+                    statusEl.innerText = 'SEM CHAVE!';
+                    setTimeout(() => statusEl.innerText = 'TRANCADA', 1200);
+                    return;
+                }
+
+                if (selectedKey !== doorNum) {
+                    statusEl.innerText = 'CHAVE ERRADA!';
+                    setTimeout(() => statusEl.innerText = 'TRANCADA', 1200);
+                    return;
+                }
+
+                // Chave e porta corretas
+                if (doorNum === 22) {
+                    doorEl.classList.add('secret-found');
+                    statusEl.innerText = 'O NOME DO ZÉ É... ZÉ!';
+                } else {
+                    doorEl.classList.add('wrong-door');
+                    statusEl.innerText = gerarXingamento(doorNum);
+                }
+            });
+
+            doorsGrid.appendChild(doorEl);
+        });
+    </script>
+
+</body>
+</html>
